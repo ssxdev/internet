@@ -1,17 +1,17 @@
-import path from 'path'
+const path = require('path')
 
-const buildEslintCommand = (filenames: string[]) =>
+const buildEslintCommand = filenames =>
   `next lint --fix --file ${filenames
     .map(f => path.relative(process.cwd(), f))
     .join(' --file ')}`
 
-const buildPrettierCommand = (filenames: string[]) =>
+const buildPrettierCommand = filenames =>
   `prettier --write ${filenames
     .map(f => path.relative(process.cwd(), f))
     .join(' ')}`
 
-const buildTypeCheckCommand = (filenames: string[]) =>
-  `tsc --noEmit --skipLibCheck --project tsconfig.json ${filenames
+const buildTypeCheckCommand = filenames =>
+  `tsc --noEmit --allowJs --skipLibCheck ${filenames
     .map(f => path.relative(process.cwd(), f))
     .join(' ')}`
 
@@ -21,4 +21,5 @@ module.exports = {
     buildPrettierCommand,
     buildTypeCheckCommand,
   ],
+  '*.{json,css,md,yml,yaml}': [buildPrettierCommand],
 }
