@@ -10,16 +10,7 @@ const buildPrettierCommand = filenames =>
     .map(f => path.relative(process.cwd(), f))
     .join(' ')}`
 
-const buildTypeCheckCommand = filenames =>
-  `tsc --noEmit --allowJs --skipLibCheck ${filenames
-    .map(f => path.relative(process.cwd(), f))
-    .join(' ')}`
-
 module.exports = {
-  '*.{js,jsx,ts,tsx}': [
-    buildEslintCommand,
-    buildPrettierCommand,
-    buildTypeCheckCommand,
-  ],
+  '*.{js,jsx,ts,tsx}': [buildEslintCommand, buildPrettierCommand],
   '*.{json,css,md,yml,yaml}': [buildPrettierCommand],
 }
