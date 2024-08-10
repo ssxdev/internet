@@ -10,7 +10,7 @@ import BlurFadeText from '@/components/magicui/blur-fade-text'
 import { ProjectCard } from '@/components/project-card'
 import { ResumeCard } from '@/components/resume-card'
 
-export const BLUR_FADE_DELAY = 0.04
+const BLUR_FADE_DELAY = 0.04
 
 export default function Home() {
   return (

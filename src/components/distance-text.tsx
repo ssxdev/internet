@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { BLUR_FADE_DELAY } from '@/app/page'
 import BlurFadeText from './magicui/blur-fade-text'
 
 function getDistance(
@@ -21,6 +20,8 @@ function getDistance(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   return Math.round(R * c)
 }
+
+const BLUR_FADE_DELAY = 0.04
 
 export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
   const [distance, setDistance] = useState<number | null>(null)
