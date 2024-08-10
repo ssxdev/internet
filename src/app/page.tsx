@@ -34,9 +34,9 @@ function Hero() {
           <div className="flex flex-1 flex-col space-y-1.5">
             <BlurFadeText
               delay={BLUR_FADE_DELAY}
-              className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
+              className="inline-block text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
               yOffset={8}
-              text={`Hi, I'm ${DATA.name.split(' ')[0]} 👋`}
+              text={`hi, i'm ${DATA.name.split(' ')[0]} 👋`}
             />
             <BlurFadeText
               className="max-w-[600px] md:text-xl"
@@ -63,7 +63,7 @@ function About() {
         <h2 className="text-xl font-bold">About</h2>
       </BlurFade>
       <BlurFade delay={BLUR_FADE_DELAY * 4}>
-        <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+        <Markdown className="prose max-w-full text-pretty font-sans text-base font-medium text-muted-foreground dark:prose-invert">
           {DATA.summary}
         </Markdown>
       </BlurFade>

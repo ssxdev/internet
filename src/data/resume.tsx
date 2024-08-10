@@ -2,7 +2,7 @@ import { CodeIcon, HomeIcon, NotebookIcon, PencilLine } from 'lucide-react'
 import { Icons } from '@/components/icons'
 
 export const DATA = {
-  name: 'Surendar Singh',
+  name: 'surendar singh',
   initials: 'SS',
   url: 'https://surendar.co',
   location: 'Chennai, IN',
@@ -10,7 +10,7 @@ export const DATA = {
   description:
     'Self-taught product engineer with a passion for building products.',
   summary:
-    'I love building end-to-end products from scratch and you will find me [working on a project](/code) most of the time. I find my passion for product when I was in junior high school, When that "one person" told me google is just a small piece of a big tech who earns by advertisements and I was like damn. and then life got me interesting, I started learning meaningfull tech which I cared about and started building products since then.',
+    'I love building end-to-end products from scratch and you will find me [working on a project](/code) most of the time. I find my passion for product when I was in junior high school, When that "[one person](https://www.linkedin.com/in/arivazhagan-s)" told me google is just a small piece of a big tech who earns by advertisements and I was like damn. and then life got me interesting, I started learning meaningfull tech which I cared about and started building products since then.',
   avatarUrl: '/me.jpg',
   skills: ['Next.js', 'Typescript', 'React', 'Node.js', 'MongoDB', 'Docker'],
   navbar: [
