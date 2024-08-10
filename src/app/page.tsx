@@ -3,13 +3,14 @@ import { DATA } from '@/data/resume'
 import Markdown from 'react-markdown'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { Distance } from '@/components/distance-text'
 import { HackathonCard } from '@/components/hackathon-card'
 import BlurFade from '@/components/magicui/blur-fade'
 import BlurFadeText from '@/components/magicui/blur-fade-text'
 import { ProjectCard } from '@/components/project-card'
 import { ResumeCard } from '@/components/resume-card'
 
-const BLUR_FADE_DELAY = 0.04
+export const BLUR_FADE_DELAY = 0.04
 
 export default function Home() {
   return (
@@ -43,6 +44,7 @@ function Hero() {
               delay={BLUR_FADE_DELAY}
               text={DATA.description}
             />
+            <Distance geo={DATA.geo} />
           </div>
           <BlurFade delay={BLUR_FADE_DELAY}>
             <Avatar className="size-28 border">

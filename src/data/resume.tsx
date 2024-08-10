@@ -6,6 +6,7 @@ export const DATA = {
   initials: 'SS',
   url: 'https://surendar.co',
   location: 'Chennai, IN',
+  geo: { lat: 12.437121, lon: 79.82924 },
   locationLink: 'https://www.google.com/maps/place/chennai',
   description:
     'Self-taught product engineer with a passion for building products.',
