@@ -7,9 +7,10 @@ function getDistance(
   Lat1: number,
   Lon1: number,
   Lat2: number,
-  Lon2: number
+  Lon2: number,
+  unit: 'miles' | 'km'
 ): number {
-  const R = 3958.8 // Radius of the Earth in miles
+  const R = unit === 'miles' ? 3958.8 : 6371
   const rLat1 = (Math.PI * Lat1) / 180
   const rLat2 = (Math.PI * Lat2) / 180
   const dLat = rLat2 - rLat1
@@ -24,7 +25,7 @@ function getDistance(
 const BLUR_FADE_DELAY = 0.04
 
 export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
-  const [distance, setDistance] = useState<number | null>(null)
+  const [distance, setDistance] = useState<string | null>(null)
   const runOnce = useRef(false)
 
   useEffect(() => {
@@ -36,8 +37,9 @@ export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
       if (navigator && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(position => {
           const { latitude, longitude } = position.coords
-          const distance = getDistance(latitude, longitude, geo.lat, geo.lon)
-          setDistance(distance)
+          const unit = 'miles'
+          const dist = getDistance(latitude, longitude, geo.lat, geo.lon, unit)
+          setDistance(`${dist} ${unit}`)
         })
       }
     }
@@ -50,7 +52,7 @@ export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
       <BlurFadeText
         className="text-sm text-muted-foreground"
         delay={BLUR_FADE_DELAY}
-        text={`You are ${distance} miles away from me`}
+        text={`You are ${distance} away from me`}
       />
     )
   )
