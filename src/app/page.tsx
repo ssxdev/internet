@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { DATA } from '@/data/resume'
 import Markdown from 'react-markdown'
@@ -44,7 +45,9 @@ function Hero() {
               delay={BLUR_FADE_DELAY}
               text={DATA.description}
             />
-            <Distance geo={DATA.geo} />
+            <Suspense fallback={null}>
+              <Distance geo={DATA.geo} />
+            </Suspense>
           </div>
           <BlurFade delay={BLUR_FADE_DELAY}>
             <Avatar className="size-28 border">

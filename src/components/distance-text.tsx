@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { Geo } from '@vercel/functions'
 import BlurFadeText from './magicui/blur-fade-text'
 
 function getDistance(
@@ -32,16 +33,19 @@ export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
     const fetchDistance = async () => {
       if (runOnce.current) return
       runOnce.current = true
-      const navigator = typeof window !== 'undefined' && window.navigator
 
-      if (navigator && 'geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const { latitude, longitude } = position.coords
-          const unit = 'miles'
-          const dist = getDistance(latitude, longitude, geo.lat, geo.lon, unit)
-          setDistance(`${dist} ${unit}`)
-        })
-      }
+      const response = await fetch('/api/location')
+      const data: Geo = await response.json()
+      if (!data.country || !data.latitude || !data.longitude) return
+      const unit = data.country === 'IN' ? 'km' : 'miles'
+      const dist = getDistance(
+        geo.lat,
+        geo.lon,
+        parseFloat(data.latitude),
+        parseFloat(data.longitude),
+        unit
+      )
+      setDistance(`${dist} ${unit}`)
     }
 
     fetchDistance()
@@ -52,7 +56,7 @@ export function Distance({ geo }: { geo: { lat: number; lon: number } }) {
       <BlurFadeText
         className="text-sm text-muted-foreground"
         delay={BLUR_FADE_DELAY}
-        text={`You are ${distance} away from me`}
+        text={`We're ${distance} apart, yet my work is within your reach.`}
       />
     )
   )
