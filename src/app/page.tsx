@@ -46,7 +46,7 @@ function Hero() {
               text={DATA.description}
             />
             <Suspense fallback={null}>
-              <Distance geo={DATA.geo} />
+              <Distance />
             </Suspense>
           </div>
           <BlurFade delay={BLUR_FADE_DELAY}>
