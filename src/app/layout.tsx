@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Navbar from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -65,6 +66,7 @@ export default function RootLayout({
           <TooltipProvider delayDuration={0}>
             {children}
             <Navbar />
+            <Toaster position="top-center" />
           </TooltipProvider>
         </ThemeProvider>
       </body>

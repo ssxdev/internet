@@ -8,6 +8,7 @@ import { Distance } from '@/components/distance-text'
 import { HackathonCard } from '@/components/hackathon-card'
 import BlurFade from '@/components/magicui/blur-fade'
 import BlurFadeText from '@/components/magicui/blur-fade-text'
+import { NewsletterCollectEmail } from '@/components/newsletter'
 import { ProjectCard } from '@/components/project-card'
 import { ResumeCard } from '@/components/resume-card'
 
@@ -16,6 +17,7 @@ const BLUR_FADE_DELAY = 0.04
 export default function Home() {
   return (
     <main className="flex min-h-[100dvh] flex-col space-y-10">
+      <NewsletterCollectEmail />
       <Hero />
       <About />
       {/* <Work /> */}
