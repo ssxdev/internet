@@ -1,9 +1,12 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
+import { EmailIsValid } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { IconSpinner } from './ui/icons'
 
 export function NewsletterCollectEmail() {
   const runEffectOnce = useRef(true)
@@ -12,7 +15,7 @@ export function NewsletterCollectEmail() {
     runEffectOnce.current = false
     setTimeout(async () => {
       await new Promise(resolve => setTimeout(resolve, 2000))
-      toast(<Newsletter />, { duration: 20000 })
+      toast(<Newsletter />, { duration: Infinity })
     })
   }, [])
 
@@ -20,27 +23,66 @@ export function NewsletterCollectEmail() {
 }
 
 function Newsletter() {
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleFormSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email) {
+      setError('We need your email to subscribe')
+      return
+    }
+    if (!EmailIsValid(email)) {
+      setError('Please enter valid email')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) {
+        const { message } = await res.json()
+        throw message
+      }
+      toast.success('Subscribed successfully')
+    } catch (error) {
+      console.error(`Failed to subscribe: ${error}`)
+      toast.error('Failed to subscribe')
+    } finally {
+      setLoading(false)
+      toast.dismiss()
+    }
+  }
+
   return (
     <section className="flex w-full flex-col gap-2 text-center">
-      <h2 className="text-lg font-extrabold tracking-tight text-secondary-foreground">
+      <label className="text-lg font-extrabold tracking-tight text-secondary-foreground">
         Sign up for my blogs
-      </h2>
-      <form
-        onSubmit={e => {
-          e.preventDefault()
-          const email = (e.target as any).elements[0].value
-          handleEmailSubscription(email)
-        }}
-      >
+      </label>
+      <form onSubmit={handleFormSubmit} className="flex flex-col gap-2">
         <div className="flex w-full max-w-sm items-center space-x-2">
-          <Input type="email" placeholder="Email" />
-          <Button type="submit">Subscribe</Button>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <Button disabled={loading} type="submit">
+            {loading ? <IconSpinner /> : 'Subscribe'}
+          </Button>
         </div>
+        {error ? (
+          <Label className="text-destructive">{error}</Label>
+        ) : (
+          <Label>I promise not to spam you</Label>
+        )}
       </form>
     </section>
   )
-}
-
-async function handleEmailSubscription(email: string) {
-  console.log(`Subscribed with email: ${email}`)
 }

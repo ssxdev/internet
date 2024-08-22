@@ -1,7 +1,9 @@
 import { Suspense } from 'react'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { DATA } from '@/data/resume'
 import Markdown from 'react-markdown'
+import { IS_SUBSCRIBED } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Distance } from '@/components/distance-text'
@@ -15,9 +17,12 @@ import { ResumeCard } from '@/components/resume-card'
 const BLUR_FADE_DELAY = 0.04
 
 export default function Home() {
+  const cookieStore = cookies()
+  const isSubscribed = cookieStore.get(IS_SUBSCRIBED)
+
   return (
     <main className="flex min-h-[100dvh] flex-col space-y-10">
-      <NewsletterCollectEmail />
+      {!isSubscribed && <NewsletterCollectEmail />}
       <Hero />
       <About />
       {/* <Work /> */}

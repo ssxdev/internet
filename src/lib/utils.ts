@@ -5,6 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const IS_SUBSCRIBED = 'isSubscribed'
+
 export function formatDate(date: string) {
   let currentDate = new Date().getTime()
   if (!date.includes('T')) {
@@ -34,4 +36,28 @@ export function formatDate(date: string) {
     const yearsAgo = Math.floor(daysAgo / 365)
     return `${fullDate} (${yearsAgo}y ago)`
   }
+}
+
+export const getErrorMessage = (error: unknown): string => {
+  if (typeof error === 'string') {
+    return error
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message)
+  }
+
+  if (error instanceof Array) {
+    return error[0]
+  }
+
+  return 'System Error!'
+}
+
+export function EmailIsValid(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
