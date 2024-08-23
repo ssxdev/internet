@@ -58,8 +58,10 @@ export const getErrorMessage = (error: unknown): string => {
   return 'System Error!'
 }
 
+export const EmailMatchRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export function EmailIsValid(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return EmailMatchRegex.test(email)
 }
 
 export function SanitizeEmail(email: string): string {

@@ -1,4 +1,6 @@
 import { cookies } from 'next/headers'
+import Email from '@/model/newsletter/email.model'
+import { connectDB } from '@/lib/connectDB'
 import {
   EmailIsValid,
   getErrorMessage,
@@ -33,8 +35,17 @@ export async function POST(request: Request) {
       )
     }
 
-    // Todo: Store email to DB
-    throw 'Feature not implemented yet'
+    await connectDB()
+
+    const existingEmail = await Email.findOne({ email: santizedEmail })
+    if (existingEmail) {
+      return Response.json(
+        { message: 'You have already subscribed' },
+        { status: 409 }
+      )
+    }
+
+    await Email.create({ email: santizedEmail })
 
     cookieStore.set(IS_SUBSCRIBED, 'true', {
       maxAge: 60 * 60 * 24 * 365, // 1 year
@@ -42,7 +53,7 @@ export async function POST(request: Request) {
 
     return Response.json({
       email: santizedEmail,
-      message: 'You have successfully subscribed',
+      message: 'Thank you for subscribing',
     })
   } catch (error) {
     return Response.json({ message: getErrorMessage(error) }, { status: 500 })
