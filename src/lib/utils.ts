@@ -61,3 +61,7 @@ export const getErrorMessage = (error: unknown): string => {
 export function EmailIsValid(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
+
+export function SanitizeEmail(email: string): string {
+  return email.trim().toLowerCase()
+}

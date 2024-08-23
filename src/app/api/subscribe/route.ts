@@ -1,5 +1,10 @@
 import { cookies } from 'next/headers'
-import { EmailIsValid, getErrorMessage, IS_SUBSCRIBED } from '@/lib/utils'
+import {
+  EmailIsValid,
+  getErrorMessage,
+  IS_SUBSCRIBED,
+  SanitizeEmail,
+} from '@/lib/utils'
 
 export async function POST(request: Request) {
   const cookieStore = cookies()
@@ -37,13 +42,9 @@ export async function POST(request: Request) {
 
     return Response.json({
       email: santizedEmail,
-      message: 'Subscribed successfully',
+      message: 'You have successfully subscribed',
     })
   } catch (error) {
     return Response.json({ message: getErrorMessage(error) }, { status: 500 })
   }
-}
-
-function SanitizeEmail(email: string): string {
-  return email.trim().toLowerCase()
 }

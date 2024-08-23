@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { EmailIsValid } from '@/lib/utils'
+import { EmailIsValid, getErrorMessage, SanitizeEmail } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,11 +29,12 @@ function Newsletter() {
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) {
+    const sanitizedEmail = SanitizeEmail(email)
+    if (!sanitizedEmail) {
       setError('We need your email to subscribe')
       return
     }
-    if (!EmailIsValid(email)) {
+    if (!EmailIsValid(sanitizedEmail)) {
       setError('Please enter valid email')
       return
     }
@@ -44,16 +45,13 @@ function Newsletter() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: sanitizedEmail }),
       })
-      if (!res.ok) {
-        const { message } = await res.json()
-        throw message
-      }
-      toast.success('Subscribed successfully')
+      const { message } = await res.json()
+      if (!res.ok) throw message
+      toast.success(message)
     } catch (error) {
-      console.error(`Failed to subscribe: ${error}`)
-      toast.error('Failed to subscribe')
+      toast.error(getErrorMessage(error))
     } finally {
       setLoading(false)
       toast.dismiss()
