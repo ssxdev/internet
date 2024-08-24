@@ -67,3 +67,22 @@ export function EmailIsValid(email: string): boolean {
 export function SanitizeEmail(email: string): string {
   return email.trim().toLowerCase()
 }
+
+export function getDistance(
+  Lat1: number,
+  Lon1: number,
+  Lat2: number,
+  Lon2: number,
+  unit = 'miles' as 'miles' | 'km'
+): string {
+  const R = unit === 'miles' ? 3958.8 : 6371
+  const rLat1 = (Math.PI * Lat1) / 180
+  const rLat2 = (Math.PI * Lat2) / 180
+  const dLat = rLat2 - rLat1
+  const dLon = (Math.PI * (Lon2 - Lon1)) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rLat1) * Math.cos(rLat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return `${Math.round(R * c)} ${unit}`
+}

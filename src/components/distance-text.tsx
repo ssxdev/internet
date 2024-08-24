@@ -14,10 +14,12 @@ export function Distance() {
       if (runOnce.current) return
       runOnce.current = true
 
-      fetch('/api/distance').then(res => {
+      fetch('/api/location').then(res => {
         if (res.ok) {
-          res.text().then(dist => {
-            setDistance(dist)
+          res.json().then(data => {
+            if (data.vercel.distance) {
+              setDistance(data.vercel.distance)
+            }
           })
         }
       })
