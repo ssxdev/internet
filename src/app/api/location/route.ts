@@ -17,7 +17,7 @@ async function getIpInfoGeo(request: NextRequest) {
     ttl: 24 * 1000 * 60 * 60, // 24 hours cache time
   }
   const cache = new LruCache(cacheOptions)
-  const ipinfoWrapper = new IPinfoWrapper('fc7d32ac2a371d', cache)
+  const ipinfoWrapper = new IPinfoWrapper(process.env.IPINFO_TOKEN!, cache)
 
   try {
     let ip = request.headers.get('X-Forwarded-For')
