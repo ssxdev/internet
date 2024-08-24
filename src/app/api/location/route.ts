@@ -1,11 +1,12 @@
-import { NextRequest } from 'next/server'
+import { type NextRequest } from 'next/server'
 import { DATA } from '@/data/resume'
 import IPinfoWrapper, { LruCache, Options } from 'node-ipinfo'
 import { getDistance, getErrorMessage } from '@/lib/utils'
 
 export async function GET(request: NextRequest) {
+  const ipInfo = await getIpInfoGeo(request)
   return Response.json({
-    ...getIpInfoGeo(request),
+    ...ipInfo,
     vercel: getVercelGeo(request),
   })
 }
