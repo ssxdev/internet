@@ -17,8 +17,8 @@ export function Distance() {
       fetch('/api/location').then(res => {
         if (res.ok) {
           res.json().then(data => {
-            if (data.vercel.distance) {
-              setDistance(data.vercel.distance)
+            if (data.distance) {
+              setDistance(data.distance)
             }
           })
         }

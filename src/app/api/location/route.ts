@@ -5,7 +5,7 @@ import { getDistance, getErrorMessage } from '@/lib/utils'
 
 export async function GET(request: NextRequest) {
   return Response.json({
-    ipInfo: await getIpInfoGeo(request),
+    ...getIpInfoGeo(request),
     vercel: getVercelGeo(request),
   })
 }
@@ -23,9 +23,20 @@ async function getIpInfoGeo(request: NextRequest) {
     if (!ip) throw 'IP not found in headers'
     const ipInfo = await ipinfoWrapper.lookupIp(ip)
 
+    const ipInfolat = ipInfo.loc.split(',')[0]
+    const ipInfolon = ipInfo.loc.split(',')[1]
+
+    const ipDist = getDistance(
+      DATA.geo.lat,
+      DATA.geo.lon,
+      parseFloat(ipInfolat),
+      parseFloat(ipInfolon),
+      ipInfo.countryCode === 'IN' ? 'km' : 'miles'
+    )
+
     return {
-      ip,
-      ipInfo,
+      distance: ipDist,
+      ...ipInfo,
     }
   } catch (error) {
     console.error('Error in ipInfo:', error)
@@ -38,20 +49,21 @@ async function getIpInfoGeo(request: NextRequest) {
 function getVercelGeo(request: NextRequest) {
   try {
     const vercelGeo = request.geo
+    let vercelDist
     if (
-      !vercelGeo ||
-      !vercelGeo.country ||
-      !vercelGeo.latitude ||
-      !vercelGeo.longitude
-    )
-      throw 'Vercel Geo is unavailable'
-    const vercelDist = getDistance(
-      DATA.geo.lat,
-      DATA.geo.lon,
-      parseFloat(vercelGeo.latitude),
-      parseFloat(vercelGeo.longitude),
-      vercelGeo.country === 'IN' ? 'km' : 'miles'
-    )
+      vercelGeo &&
+      vercelGeo.country &&
+      vercelGeo.latitude &&
+      vercelGeo.longitude
+    ) {
+      vercelDist = getDistance(
+        DATA.geo.lat,
+        DATA.geo.lon,
+        parseFloat(vercelGeo.latitude),
+        parseFloat(vercelGeo.longitude),
+        vercelGeo.country === 'IN' ? 'km' : 'miles'
+      )
+    }
     return {
       distance: vercelDist,
       geo: vercelGeo,
