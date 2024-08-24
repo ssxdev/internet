@@ -1,17 +1,15 @@
-import { type NextRequest } from 'next/server'
 import { DATA } from '@/data/resume'
 import IPinfoWrapper, { LruCache, Options } from 'node-ipinfo'
 import { getDistance, getErrorMessage } from '@/lib/utils'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   const ipInfo = await getIpInfoGeo(request)
   return Response.json({
     ...ipInfo,
-    vercel: getVercelGeo(request),
   })
 }
 
-async function getIpInfoGeo(request: NextRequest) {
+async function getIpInfoGeo(request: Request) {
   const cacheOptions: Options<string, any> = {
     max: 5000, // 5000 max items in cache
     ttl: 24 * 1000 * 60 * 60, // 24 hours cache time
@@ -41,37 +39,6 @@ async function getIpInfoGeo(request: NextRequest) {
     }
   } catch (error) {
     console.error('Error in ipInfo:', error)
-    return {
-      error: getErrorMessage(error),
-    }
-  }
-}
-
-function getVercelGeo(request: NextRequest) {
-  try {
-    const vercelGeo = request.geo
-    let vercelDist
-    if (
-      vercelGeo &&
-      vercelGeo.country &&
-      vercelGeo.latitude &&
-      vercelGeo.longitude
-    ) {
-      vercelDist = getDistance(
-        DATA.geo.lat,
-        DATA.geo.lon,
-        parseFloat(vercelGeo.latitude),
-        parseFloat(vercelGeo.longitude),
-        vercelGeo.country === 'IN' ? 'km' : 'miles'
-      )
-    }
-    return {
-      distance: vercelDist,
-      geo: vercelGeo,
-      ip: request.ip,
-    }
-  } catch (error) {
-    console.error('Error in vercelGeo:', error)
     return {
       error: getErrorMessage(error),
     }
