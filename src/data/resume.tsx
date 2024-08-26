@@ -2,12 +2,13 @@ import { CodeIcon, HomeIcon, NotebookIcon, PencilLine } from 'lucide-react'
 import { Icons } from '@/components/icons'
 
 export const DATA = {
-  name: 'surendar singh',
+  name: 'Surendar Singh',
   initials: 'SS',
   url: 'https://surendar.co',
   location: 'Chennai, IN',
   geo: { lat: 12.43588, lon: 79.833751 },
   locationLink: 'https://www.google.com/maps/place/chennai',
+  title: "hi, i'm surendar 👋",
   description:
     'Self-taught product engineer with a passion for building products.',
   summary:
