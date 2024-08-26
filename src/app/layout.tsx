@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter as FontSans } from 'next/font/google'
+import {
+  Inter as FontSans,
+  Noto_Serif_Georgian as FontSerif,
+} from 'next/font/google'
 import { DATA } from '@/data/resume'
 import { cn } from '@/lib/utils'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -11,6 +14,13 @@ import { Toaster } from '@/components/ui/sonner'
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+})
+
+const fontSerif = FontSerif({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -59,7 +69,8 @@ export default function RootLayout({
       <body
         className={cn(
           'mx-auto min-h-screen max-w-2xl bg-background px-6 py-12 font-sans antialiased sm:py-24',
-          fontSans.variable
+          fontSans.variable,
+          fontSerif.variable
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
