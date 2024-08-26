@@ -6,6 +6,7 @@ import Markdown from 'react-markdown'
 import { IS_SUBSCRIBED } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { BuiltWith } from '@/components/built-with'
 import { Distance } from '@/components/distance-text'
 import { HackathonCard } from '@/components/hackathon-card'
 import BlurFade from '@/components/magicui/blur-fade'
@@ -30,7 +31,7 @@ export default function Home() {
       {/* <Skill /> */}
       {/* <Projects /> */}
       {/* <Hackathons /> */}
-      {/* <Contact /> */}
+      <Contact />
     </main>
   )
 }
@@ -260,19 +261,20 @@ function Contact() {
               Contact
             </div>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              Get in Touch
+              let&apos;s get in touch
             </h2>
             <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Want to chat? Just shoot me a dm{' '}
+              Want to chat? Just shoot me a dm on{' '}
               <Link
                 href={DATA.contact.social.X.url}
                 className="text-blue-500 hover:underline"
               >
-                with a direct question on twitter
+                @{DATA.contact.social.X.url.split('/').pop()}
               </Link>{' '}
               and I&apos;ll respond whenever I can. I will ignore all
               soliciting.
             </p>
+            <BuiltWith />
           </div>
         </BlurFade>
       </div>
