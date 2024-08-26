@@ -22,6 +22,8 @@ async function getIpInfoGeo(request: Request) {
     if (!ip) throw 'IP not found in headers'
     const ipInfo = await ipinfoWrapper.lookupIp(ip)
 
+    if (!ipInfo.loc) throw 'Location not found in IP info'
+
     const ipInfolat = ipInfo.loc.split(',')[0]
     const ipInfolon = ipInfo.loc.split(',')[1]
 
