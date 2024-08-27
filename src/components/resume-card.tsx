@@ -43,6 +43,7 @@ export const ResumeCard = ({
       href={href || '#'}
       className="block cursor-pointer"
       onClick={handleClick}
+      target="_blank"
     >
       <Card className="flex">
         <div className="flex-none">
@@ -61,7 +62,7 @@ export const ResumeCard = ({
               <h3 className="inline-flex items-center justify-center text-xs font-semibold leading-none sm:text-sm">
                 {title}
                 {badges && (
-                  <span className="inline-flex gap-x-1">
+                  <span className="ml-1 inline-flex gap-x-1">
                     {badges.map((badge, index) => (
                       <Badge
                         variant="secondary"

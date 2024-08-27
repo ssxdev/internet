@@ -32,7 +32,7 @@ export function BuiltWith() {
   useEffect(() => {
     const interval = setInterval(() => {
       setEmotion(emotions[Math.floor(Math.random() * emotions.length)])
-    }, 300)
+    }, 400)
 
     return () => clearInterval(interval)
   }, [emotions])

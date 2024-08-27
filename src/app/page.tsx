@@ -26,8 +26,8 @@ export default function Home() {
       {!isSubscribed && <NewsletterCollectEmail />}
       <Hero />
       <About />
-      {/* <Work /> */}
-      {/* <Education /> */}
+      <Work />
+      <Education />
       {/* <Skill /> */}
       {/* <Projects /> */}
       {/* <Hackathons /> */}
