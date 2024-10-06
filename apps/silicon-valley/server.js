@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const AUDIO_FILE = path.join(__dirname, "silicon-valley-audio.m4a");
 
 let connectedUsers = 0;
+let activeListeners = 0;
 let streamStartTime = Date.now();
 
 app.get("/", (req, res) => {
@@ -49,16 +50,44 @@ app.get("/audio", (req, res) => {
 
 io.on("connection", (socket) => {
   connectedUsers++;
-  io.emit("userCount", connectedUsers);
+  io.emit("userCount", {
+    connected: connectedUsers,
+    listening: activeListeners,
+  });
+
+  socket.on("startListening", () => {
+    activeListeners++;
+    console.log(`Connected: ${connectedUsers}, Listening: ${activeListeners}`);
+    io.emit("userCount", {
+      connected: connectedUsers,
+      listening: activeListeners,
+    });
+  });
 
   socket.on("requestSync", () => {
     const currentTime = (Date.now() - streamStartTime) / 1000;
     socket.emit("sync", { currentTime });
   });
 
+  socket.on("stopListening", () => {
+    if (activeListeners > 0) {
+      activeListeners--;
+      io.emit("userCount", {
+        connected: connectedUsers,
+        listening: activeListeners,
+      });
+    }
+  });
+
   socket.on("disconnect", () => {
     connectedUsers--;
-    io.emit("userCount", connectedUsers);
+    if (activeListeners > 0) {
+      activeListeners--;
+    }
+    io.emit("userCount", {
+      connected: connectedUsers,
+      listening: activeListeners,
+    });
   });
 });
 

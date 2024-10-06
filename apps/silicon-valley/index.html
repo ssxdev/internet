@@ -4,109 +4,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synchronized Audio Stream</title>
+    <title>Silicon Valley Track</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        body,
+        html {
             margin: 0;
-            background-color: #f0f0f0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
         }
 
-        .container {
-            text-align: center;
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        body {
+            background-image: url('https://variety.com/wp-content/uploads/2014/03/siliconvalley04.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        h1 {
-            margin-bottom: 1rem;
-        }
-
-        #userCount {
-            font-weight: bold;
-            color: #4a4a4a;
-        }
-
-        #volumeControl {
-            width: 200px;
-            margin-top: 1rem;
-        }
-
-        #startButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
+        #live-count {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #start-button {
+            background-color: #E62427;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: #00b36b;
+            /* Pied Piper green */
             border: none;
             border-radius: 5px;
-            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .button:hover {
+            background-color: #00995c;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .button.stop {
+            background-color: #ff4f4f;
+            /* A contrasting red color for stop */
+        }
+
+        .button.stop:hover {
+            background-color: #e60000;
+        }
+
+        #volume-control {
+            width: 200px;
+            margin-top: 20px;
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Synchronized Audio Stream</h1>
-        <p>Connected Users: <span id="userCount">0</span></p>
-        <audio id="audioPlayer"></audio>
-        <br>
-        <label for="volumeControl">Volume:</label>
-        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
-        <br>
-        <button id="startButton">Start Audio</button>
-    </div>
+    <div id="live-count"><span id="users">0</span> listening</div>
+    <button id="listen-button" class="button">Start Listening</button>
+    <input type="range" id="volume-control" min="0" max="100" value="50">
+    <audio id="audio-stream"></audio>
 
     <script>
         const socket = io();
-        const audioPlayer = document.getElementById('audioPlayer');
-        const userCountElement = document.getElementById('userCount');
-        const volumeControl = document.getElementById('volumeControl');
-        const startButton = document.getElementById('startButton');
+        const listenButton = document.getElementById('listen-button');
+        const volumeControl = document.getElementById('volume-control');
+        const audioStream = document.getElementById('audio-stream');
+        const liveCount = document.getElementById('users');
 
-        audioPlayer.src = '/audio';
+        audioStream.src = '/audio';
+        let isPlaying = false;
 
-        function startAudio() {
-            audioPlayer.play().then(() => {
-                console.log('Audio started successfully');
-                startButton.style.display = 'none';
-                socket.emit('requestSync');
-            }).catch(error => {
-                console.error('Audio play failed:', error);
-            });
-        }
-
-        startButton.addEventListener('click', startAudio);
-
-        volumeControl.addEventListener('input', (e) => {
-            audioPlayer.volume = e.target.value;
+        listenButton.addEventListener('click', () => {
+            if (isPlaying) {
+                audioStream.pause();
+                socket.emit('stopListening');
+                listenButton.textContent = 'Start Listening';
+                listenButton.classList.remove('stop');
+                volumeControl.style.display = 'none';
+            } else {
+                audioStream.play();
+                socket.emit('startListening');
+                listenButton.textContent = 'Stop Listening';
+                listenButton.classList.add('stop');
+                volumeControl.style.display = 'block';
+            }
+            isPlaying = !isPlaying;
         });
 
-        socket.on('userCount', (count) => {
-            userCountElement.textContent = count;
+        volumeControl.addEventListener('input', (e) => {
+            audioStream.volume = e.target.value / 100;
+        });
+
+        socket.on('userCount', ({ connected, listening }) => {
+            console.log(`Connected: ${connected}`)
+            liveCount.textContent = listening;
         });
 
         socket.on('sync', ({ currentTime }) => {
-            const diff = Math.abs(audioPlayer.currentTime - currentTime);
+            const diff = Math.abs(audioStream.currentTime - currentTime);
             if (diff > 0.5) {
-                audioPlayer.currentTime = currentTime;
+                audioStream.currentTime = currentTime;
             }
         });
 
         socket.on('resetAudio', () => {
-            audioPlayer.currentTime = 0;
+            audioStream.currentTime = 0;
         });
 
-        audioPlayer.addEventListener('ended', () => {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play();
+        audioStream.addEventListener('ended', () => {
+            audioStream.currentTime = 0;
+            audioStream.play();
         });
     </script>
 </body>
