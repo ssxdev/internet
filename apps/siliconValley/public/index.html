@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Audio Stream</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        #joinButton {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Continuous Audio Stream</h1>
+    <button id="joinButton">Join Stream</button>
+    <p id="currentTime">Current Time: 0:00</p>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const audio = new Audio();
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const joinButton = document.getElementById('joinButton');
+
+        let isPlaying = false;
+
+        joinButton.addEventListener('click', () => {
+            if (!isPlaying) {
+                audio.src = '/stream';
+                audio.play().then(() => {
+                    isPlaying = true;
+                    joinButton.style.display = 'none';
+                    socket.emit('requestPlaybackState');
+                }).catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            }
+        });
+
+        socket.on('playbackState', (state) => {
+            if (isPlaying) {
+                audio.currentTime = state.currentTime;
+                updateTimeDisplay(state.currentTime);
+            }
+        });
+
+        socket.on('timeUpdate', (time) => {
+            if (isPlaying) {
+                updateTimeDisplay(time);
+            }
+        });
+
+        function updateTimeDisplay(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+            currentTimeDisplay.textContent = `Current Time: ${minutes}:${seconds}`;
+        }
+
+        // Handle audio ending and restarting
+        audio.addEventListener('ended', () => {
+            audio.currentTime = 0;
+            audio.play().catch(error => console.error('Error restarting audio:', error));
+        });
+    </script>
+</body>
+
+</html>
