@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synchronized Audio Stream</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        #userCount {
+            font-weight: bold;
+            color: #4a4a4a;
+        }
+
+        #volumeControl {
+            width: 200px;
+            margin-top: 1rem;
+        }
+
+        #startButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Synchronized Audio Stream</h1>
+        <p>Connected Users: <span id="userCount">0</span></p>
+        <audio id="audioPlayer"></audio>
+        <br>
+        <label for="volumeControl">Volume:</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+        <br>
+        <button id="startButton">Start Audio</button>
+    </div>
+
+    <script>
+        const socket = io();
+        const audioPlayer = document.getElementById('audioPlayer');
+        const userCountElement = document.getElementById('userCount');
+        const volumeControl = document.getElementById('volumeControl');
+        const startButton = document.getElementById('startButton');
+
+        audioPlayer.src = '/audio';
+
+        function startAudio() {
+            audioPlayer.play().then(() => {
+                console.log('Audio started successfully');
+                startButton.style.display = 'none';
+                socket.emit('requestSync');
+            }).catch(error => {
+                console.error('Audio play failed:', error);
+            });
+        }
+
+        startButton.addEventListener('click', startAudio);
+
+        volumeControl.addEventListener('input', (e) => {
+            audioPlayer.volume = e.target.value;
+        });
+
+        socket.on('userCount', (count) => {
+            userCountElement.textContent = count;
+        });
+
+        socket.on('sync', ({ currentTime }) => {
+            const diff = Math.abs(audioPlayer.currentTime - currentTime);
+            if (diff > 0.5) {
+                audioPlayer.currentTime = currentTime;
+            }
+        });
+
+        socket.on('resetAudio', () => {
+            audioPlayer.currentTime = 0;
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
+        });
+    </script>
+</body>
+
+</html>
