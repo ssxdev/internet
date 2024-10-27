@@ -27,6 +27,9 @@ async function getIpInfoGeo(request: Request) {
     const ipInfolat = ipInfo.loc.split(',')[0]
     const ipInfolon = ipInfo.loc.split(',')[1]
 
+    if (!ipInfolat || !ipInfolon)
+      throw 'Latitude or Longitude not found in IP info'
+
     const ipDist = getDistance(
       DATA.geo.lat,
       DATA.geo.lon,

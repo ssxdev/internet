@@ -1,4 +1,4 @@
-import { model, models, Schema } from 'mongoose'
+import { model, Schema } from 'mongoose'
 import { EmailMatchRegex } from '@/lib/utils'
 
 const emailSchema = new Schema(
@@ -25,6 +25,6 @@ const emailSchema = new Schema(
   }
 )
 
-const Email = models.email || model('email', emailSchema)
+const Email = model('email', emailSchema)
 
 export default Email
